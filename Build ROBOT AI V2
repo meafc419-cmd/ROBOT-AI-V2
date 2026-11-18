@@ -1,0 +1,40 @@
+
+name: Build ROBOT AI V2
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ROBOT_AI_V2_ANDROID_PROJECT.zip'
+      - '.github/workflows/android.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ambil proyek
+        uses: actions/checkout@v4
+
+      - name: Siapkan Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Siapkan Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Ekstrak proyek
+        run: unzip -q ROBOT_AI_V2_ANDROID_PROJECT.zip
+
+      - name: Bangun APK
+        working-directory: robot-ai-v2
+        run: gradle assembleDebug
+
+      - name: Simpan APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ROBOT-AI-V2-APK
+          path: robot-ai-v2/app/build/outputs/apk/debug/app-debug.apk
